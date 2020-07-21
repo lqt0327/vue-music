@@ -2,6 +2,9 @@
   <div id="app">
     <music-header />
     <tab></tab>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
