@@ -11,3 +11,8 @@ export function getRecommendList() {
     const url = HOST + '/personalized'
     return axios.get(url)
 }
+
+export function getRecommendMusic() {
+    const url = HOST + '/personalized/newsong'
+    return axios.get(url)
+}
