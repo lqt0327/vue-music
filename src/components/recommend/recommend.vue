@@ -76,7 +76,6 @@ export default {
       getRecommendMusic().then((res) => {
         if (res.status === ERR_OK) {
           this.recommendMusic = res.data.result.splice(1);
-          console.log(this.recommendMusic);
         }
       });
     },
