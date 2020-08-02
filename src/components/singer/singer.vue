@@ -1,11 +1,14 @@
 <template>
-  <div class="singer"></div>
+  <div class="singer">
+    <singer-list :data="singerList"></singer-list>
+  </div>
 </template>
 
 <script>
 import { getSingerList } from "api/singer";
 import Singer from "common/js/singer";
 import { ERR_OK } from "common/js/config";
+import SingerList from 'base/singer-list/singer-list';
 
 const HOT_NAME = "热门";
 const HOT_NAME_LENGTH = 10;
@@ -88,8 +91,23 @@ export default {
       return hot.concat(nohot);
     },
   },
+  components:{
+    SingerList
+  }
 };
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
+  .v-enter-active, .v-leave-active
+    transition all 0.1s
+
+  .v-enter, .v-leave-to
+    transform translate3d(50%, 0, 0)
+    opacity 0
+
+  .singer
+    position fixed
+    top 88px
+    bottom 0
+    width 100%
 </style>
