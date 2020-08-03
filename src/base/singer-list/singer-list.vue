@@ -1,5 +1,12 @@
 <template>
-  <scroll class="singer-list" :data="data" ref="singerList">
+  <scroll
+   class="singer-list"
+   :data="data"
+   ref="singerList"
+   :listenScroll="listenScroll"
+   @scroll="scroll"  
+   :probeType="probeType" 
+  >
     <ul>
       <li v-for="list of data" class="list" ref="list">
         <h1 class="list-title">{{list.title}}</h1>
@@ -17,7 +24,12 @@
       @touchmove.stop.prevent="scrollTouchMove"
     >
       <ul>
-        <li class="item" v-for="(item,index) of scrollList" :data-index="index">{{item}}</li>
+        <li 
+        class="item" 
+        v-for="(item,index) of scrollList" 
+        :data-index="index" 
+        :class="{'currentIndex':currentIndex === index}"
+        >{{item}}</li>
       </ul>
     </div>
   </scroll>
@@ -29,6 +41,12 @@ import { getIndex } from "common/js/dom";
 
 export default {
   name: "singer-list",
+  data() {
+    return {
+      scrollY: -1,
+      currentIndex: 0,
+    }
+  },
   props: {
     data: {
       type: Array,
@@ -37,6 +55,9 @@ export default {
   },
   created(){
     this.touch = {}
+    this.listenScroll = true
+    this.listHeight = []
+    this.probeType = 3
   },
   computed: {
     scrollList() {
@@ -63,9 +84,48 @@ export default {
       let targetIndex = parseInt(this.touch.targetIndex) + delta
       // let targetIndex = this.touch.targetIndex + delta  // 错误写法
       this.$refs.singerList.scrollToElement(this.$refs.list[targetIndex], 0);
-      console.log(targetIndex);
+      // console.log(targetIndex);
     },
+    scroll(place) {
+      this.scrollY = place.y
+    },
+    _countHeight(){
+      this.listHeight = []
+      const list = this.$refs.list
+      let height = 0;
+      this.listHeight.push(height)
+      for(let i = 0; i < list.length; i++) {
+        let item = list[i]
+        height += item.clientHeight
+        this.listHeight.push(height)
+      }
+    }
   },
+  watch: {
+    data() {
+      setTimeout(()=>{
+        this._countHeight()
+      },20)
+    },
+    scrollY(newY) {
+      const listHeight = this.listHeight
+
+      if(newY > 0) {
+        this.currentIndex = 0;
+        return;
+      }
+
+      for(let i = 0; i < listHeight.length; i++) {
+        let heightMax = listHeight[i+1]
+        let heightMin = listHeight[i]
+        if(!heightMax || -newY >= heightMin && -newY < heightMax) {
+          this.currentIndex =i
+          return
+        }
+      }
+      this.currentIndex = 0
+    }
+  }
 };
 </script>
 
